@@ -10,9 +10,9 @@ import glob
 import datetime
 from datetime import datetime, timedelta
 # from pytz import UTC  # timezone
-import dateutil.parser
+# import dateutil.parser
 # import uuid
-# from app.models import db
+from app.db import NCBdb
 import requests
 import json
 import logging
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 def confClean(_type):
-    condb = current_app.engine  # mysql DB connector
+    condb = NCBdb(LocalConfig)  # mysql DB connector
 #  CHECKER PART
     logging.info("Cleaner started")
     if _type == 'persistent':
@@ -93,7 +93,8 @@ def confClean(_type):
     headers = {'content-type': 'application/json'}  # Necessary for sending JSON body
     # removing records from DB via API
     for i in ploadlist:
-        url = "http://100.127.2.12:8191/ncb/deleteConfRoom/{}".format(i['rid'])
+        # url = "http://100.127.2.12:8191/ncb/deleteConfRoom/{}".format(i['rid'])
+        url = "http://100.127.2.12:8191/ncb/deleteConfRoom/{}"
         payload = i
         r = requests.delete(url, data=json.dumps(payload), headers=headers)
         fpath = '{}/{}/{}'.format(m_path, d['vcb_id'], 'records')  # forming path for further removing of files
