@@ -14,7 +14,7 @@ session = scoped_session(sessionmaker(bind=engine))
 logger = logging.getLogger(__name__)
 
 
-class NCBdb(LocalConfig):
+class NCBdb():
 
     def ncb_getQuery(self, querySQL):
         try:
@@ -36,8 +36,8 @@ class NCBdb(LocalConfig):
 
         return listdict[1][0] if listdict[1][0] else []
 
-    def getGlobalMediaPath(self):
-        if not os.path.exists(self.conferenceMediaStoragePath):  # check it out whether it exist
-            return None  # if it doesn't - return None
-        else:
-            return self.conferenceMediaStoragePath  # otherwise return the path
+    # def getGlobalMediaPath(self):
+    #    if not os.path.exists(self.conferenceMediaStoragePath):  # check it out whether it exist
+    #        return None  # if it doesn't - return None
+    #    else:
+    #       return self.conferenceMediaStoragePath  # otherwise return the path
