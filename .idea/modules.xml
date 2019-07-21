@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/NCB_Cleaner.iml" filepath="$PROJECT_DIR$/.idea/NCB_Cleaner.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../ncb_20_PY_applsrv/.idea/ncb_20_PY_applsrv.iml" filepath="$PROJECT_DIR$/../ncb_20_PY_applsrv/.idea/ncb_20_PY_applsrv.iml" />
     </modules>
   </component>
 </project>

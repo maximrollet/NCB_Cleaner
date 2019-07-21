@@ -5,17 +5,17 @@ CONF CLEANER MODULE
 """
 
 import os
-# import sys
 import glob
-import datetime
 from datetime import datetime, timedelta
 # from pytz import UTC  # timezone
-# import dateutil.parser
 # import uuid
-from app.db import NCBdb
+from OLD_MOD.app.db import NCBdb
 import requests
 import json
 import logging
+from config.config import LocalConfig
+
+
 # logging.basicConfig(format='%(asctime)s | %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename="cleaner.log", level=logging.DEBUG)
 # logging.basicConfig(format='%(asctime)s.%(msecs)d %(levelname)s in \'%(module)s\' at line %(lineno)d: %(message)s',
 #                      datefmt='%Y-%m-%d %H:%M:%S',filename="cleaner.log", level=logging.DEBUG)
@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 def confClean(_type):
+
     condb = NCBdb(LocalConfig)  # mysql DB connector
 #  CHECKER PART
     logging.info("Cleaner started")
@@ -94,7 +95,7 @@ def confClean(_type):
     # removing records from DB via API
     for i in ploadlist:
         # url = "http://100.127.2.12:8191/ncb/deleteConfRoom/{}".format(i['rid'])
-        url = "http://100.127.2.12:8191/ncb/deleteConfRoom/{}"
+        url = "http://100.127.2.12:8191/ncb/deleteConfRoom"
         payload = i
         r = requests.delete(url, data=json.dumps(payload), headers=headers)
         fpath = '{}/{}/{}'.format(m_path, d['vcb_id'], 'records')  # forming path for further removing of files
@@ -109,7 +110,7 @@ def confClean(_type):
             for mask in masklist:
                 l = glob.glob(mask)
                 filelist.extend(l)  # list with files found by mask
-    except:
+    except Exception:
         logging.error("Files not found in the directory: Check path existance!")
 
     try:
@@ -117,5 +118,5 @@ def confClean(_type):
             os.chdir(path)
             for file in filelist:
                 os.unlink(file)
-    except:
+    except Exception:
         logging.error("Files not found in the directory!")
