@@ -1,19 +1,27 @@
 <component name="ProjectDictionaryState">
   <dictionary name="maxim">
     <words>
+      <w>condb</w>
+      <w>ethalon</w>
       <w>existance</w>
       <w>filelist</w>
       <w>flist</w>
       <w>fpath</w>
+      <w>haproxy</w>
       <w>listdict</w>
       <w>listdicttodict</w>
       <w>masklist</w>
+      <w>maximrollet</w>
+      <w>maxstoretime</w>
+      <w>obtining</w>
       <w>pathlist</w>
       <w>ploadlist</w>
+      <w>pymysql</w>
       <w>resconflist</w>
       <w>sessionmaker</w>
       <w>sqlalchemy</w>
       <w>sqlquery</w>
+      <w>stamptime</w>
       <w>warnmess</w>
     </words>
   </dictionary>

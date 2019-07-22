@@ -13,16 +13,13 @@ import requests
 import json
 import logging
 from sqlalchemy import *
-from sqlalchemy import create_engine
-from sqlalchemy import exc, text
-from config.config import LocalConfig
+from sqlalchemy.orm import *
 from config.config import LocalConfig
 
-engine = create_engine(os.environ['SQLALCHEMY_DATABASE_URI'], echo=True)
+condb = create_engine(SQLALCHEMY_DATABASE_URI, echo=True)
+Session = sessionmaker(bind=condb)
+session = Session()
 
-# logging.basicConfig(format='%(asctime)s | %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename="cleaner.log", level=logging.DEBUG)
-# logging.basicConfig(format='%(asctime)s.%(msecs)d %(levelname)s in \'%(module)s\' at line %(lineno)d: %(message)s',
-#                      datefmt='%Y-%m-%d %H:%M:%S',filename="cleaner.log", level=logging.DEBUG)
 stamptime = datetime.now()
 m_path = '/media/conference'
 
@@ -31,8 +28,7 @@ logger = logging.getLogger(__name__)
 
 def confClean(_type):
 
-    condb = NCBdb(LocalConfig)  # mysql DB connector
-#  CHECKER PART
+    # CHECKER PART
     logging.info("Cleaner started")
     if _type == 'persistent':
         table = 'type_persistent'
@@ -45,14 +41,15 @@ def confClean(_type):
         warnmess = "Wrong conference type '{}'".format(_type)
         logging.warning(warnmess)
 
-    resconflist = [] # list with check results for conferences
+    resconflist = []  # list with check results for conferences
     logging.info("mysql queries")
     if table == 'type_scheduled':  # For scheduled type of conferences
         sql = """SELECT a.rid, a.vcb_id, a.room_id, b.start_date, b.duration
                  FROM conf_room AS a LEFT JOIN {} AS b ON b.rid = a.rid
                  WHERE a.type = '{}'""".format(table, _type)
-        rqw = condb.ncb_getQuery(sql)
-        if rqw[1]:  # obtining maximum storge time from ethalone table
+        row = session.execute(text(sql)).fetchall()
+        rqw = [dict(item) for item in row]
+        if rqw[1]:  # obtaining maximum storage time from ethalon table
             sql = "SELECT value FROM confmisc WHERE attribute = 'maxstoretime'"
             row = condb.ncb_getQuery(sql)
             b = int(row[1][0]['value'])

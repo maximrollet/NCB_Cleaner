@@ -1,13 +1,14 @@
 import os
 import logging
 from sqlalchemy import *
-from sqlalchemy import create_engine
-from sqlalchemy import exc, text
+from sqlalchemy.orm import *
 from config.config import LocalConfig
 
 logger = logging.getLogger(__name__)
 
-engine = create_engine(os.environ['SQLALCHEMY_DATABASE_URI'], echo=True)
+conn = create_engine(os.environ['SQLALCHEMY_DATABASE_URI'], echo=True)
+Session = sessionmaker(bind=conn)
+session = Session()
 
 
 # class NCBdb(LocalConfig):
