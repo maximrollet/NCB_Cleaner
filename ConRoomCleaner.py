@@ -12,6 +12,7 @@ import json
 import logging
 from sqlalchemy import *
 from sqlalchemy.orm import *
+from config.def_config import *
 
 condb = create_engine(SQLALCHEMY_DATABASE_URI, echo=True)
 Session = sessionmaker(bind=condb)
