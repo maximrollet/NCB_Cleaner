@@ -13,7 +13,7 @@ from OLD_MOD.app.db import NCBdb
 import requests
 import json
 import logging
-from config.config import LocalConfig
+from config.def_config import *
 
 
 # logging.basicConfig(format='%(asctime)s | %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename="cleaner.log", level=logging.DEBUG)

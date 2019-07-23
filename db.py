@@ -2,7 +2,7 @@ import os
 import logging
 from sqlalchemy import *
 from sqlalchemy.orm import *
-from config.config import LocalConfig
+from config.def_config import *
 
 logger = logging.getLogger(__name__)
 

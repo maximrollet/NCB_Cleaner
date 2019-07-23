@@ -3,7 +3,7 @@ import logging
 from sqlalchemy import *
 from sqlalchemy import create_engine
 from sqlalchemy import exc, text
-from config.config import LocalConfig
+from config.def_config import *
 
 logger = logging.getLogger(__name__)
 

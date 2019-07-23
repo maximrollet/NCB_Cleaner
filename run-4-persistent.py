@@ -1,5 +1,5 @@
 #! /usr/bin/python
 
-from OLD_MOD.app import modCleaner
+from modCleaner import confClean
 
 modCleaner.confClean('persistent')
