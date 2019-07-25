@@ -14,19 +14,16 @@ from sqlalchemy import *
 from sqlalchemy.orm import *
 from config.def_config import *
 
-# condb = create_engine(SQLALCHEMY_DATABASE_URI, echo=True)
-# Session = sessionmaker(bind=condb)
-# session = Session()
-
 base_path = os.path.dirname(os.path.abspath(__file__))
-
-stamptime = datetime.now()
-# m_path = '/media/conference'
+m_path = '/media/conference'
 
 logger = logging.getLogger(__name__)
 
 
-class ConfCleaner:
+class Cleaner:
+
+    def __init__(self, _type):
+        self._type = _type
 
     def confroomclean(self, _type):
 
@@ -43,6 +40,7 @@ class ConfCleaner:
             warnmess = "Wrong conference type '{}'".format(_type)
             logging.warning(warnmess)
 
+        stamptime = datetime.now()  # stamp of time for comparing
         resconflist = []  # list with check results for conferences
         logging.info("mysql queries")
         if table == 'type_scheduled':  # For scheduled type of conferences
@@ -54,8 +52,8 @@ class ConfCleaner:
             if rqw[1]:  # obtaining maximum storage time from ethalon table
                 sql = "SELECT value FROM confmisc WHERE attribute = 'maxstoretime'"
                 row = session.execute(text(sql)).fetchall()
-                rqw = [dict(item) for item in row]
-                b = int(rqw[1][0]['value'])
+                res = [dict(item) for item in row]
+                b = int(res[1][0]['value'])
                 maxstoretime = timedelta(days=b)
             for dict in rqw[1]:
                 dict['duration'] = int(dict['duration'])
@@ -66,11 +64,13 @@ class ConfCleaner:
             sql = """SELECT a.rid, a.vcb_id, a.room_id, b.end_date
                      FROM conf_room AS a LEFT JOIN {} AS b ON b.rid = a.rid
                      WHERE a.type = '{}'""".format(table, _type)
-            rqw = condb.ncb_getQuery(sql)
+            row = session.execute(text(sql)).fetchall()
+            rqw = [dict(item) for item in row]
             if rqw[1]:  # obtining maximum storge time from ethalone table
                 sql = "SELECT value FROM confmisc WHERE attribute = 'maxstoretime'"
-                row = condb.ncb_getQuery(sql)
-                b = int(row[1][0]['value'])
+                row = session.execute(text(sql)).fetchall()
+                res = [dict(item) for item in row]
+                b = int(res[1][0]['value'])
                 maxstoretime = timedelta(days=b)
             for dict in rqw[1]:  # add maximum storadge time
                 dict['end_date'] = (dict['end_date'] + maxstoretime)
@@ -115,7 +115,7 @@ class ConfCleaner:
                 for mask in masklist:
                     l = glob.glob(mask)
                     filelist.extend(l)  # list with files found by mask
-        except Exception:
+        except:
             logging.error("Files not found in the directory: Check path existance!")
 
         try:
@@ -123,5 +123,5 @@ class ConfCleaner:
                 os.chdir(path)
                 for file in filelist:
                     os.unlink(file)
-        except Exception:
+        except:
             logging.error("Files not found in the directory!")

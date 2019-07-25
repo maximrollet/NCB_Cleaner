@@ -12,7 +12,7 @@ session = Session()
 
 
 # class NCBdb(LocalConfig):
-class NCBdb(LocalConfig):
+class NCBdb:
 
     def ncb_getQuery(self, sqlquery):
         try:
