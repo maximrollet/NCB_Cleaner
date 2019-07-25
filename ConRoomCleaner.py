@@ -20,7 +20,7 @@ m_path = '/media/conference'
 logger = logging.getLogger(__name__)
 
 
-class Cleaner:
+class CRCleaner:
 
     def __init__(self, _type):
         self._type = _type
@@ -30,57 +30,57 @@ class Cleaner:
         # CHECKER PART
         logging.info("Cleaner started")
         if _type == 'persistent':
-            table = 'type_persistent'
+            table = 'type_persistent'  # type: str
         elif _type == 'recurring':
             table = 'type_recurring'
         elif _type == 'scheduled':
             table = 'type_scheduled'
         else:
-            return {"result": False, "reason": "Wrong type of conference - '{}''".format(_type)}, 400
             warnmess = "Wrong conference type '{}'".format(_type)
             logging.warning(warnmess)
+            return {"result": False, "reason": "Wrong type of conference - '{}''".format(_type)}, 400
 
         stamptime = datetime.now()  # stamp of time for comparing
         resconflist = []  # list with check results for conferences
         logging.info("mysql queries")
         if table == 'type_scheduled':  # For scheduled type of conferences
-            sql = """SELECT a.rid, a.vcb_id, a.room_id, b.start_date, b.duration
+            querysql = """SELECT a.rid, a.vcb_id, a.room_id, b.start_date, b.duration
                      FROM conf_room AS a LEFT JOIN {} AS b ON b.rid = a.rid
                      WHERE a.type = '{}'""".format(table, _type)
-            row = session.execute(text(sql)).fetchall()
-            rqw = [dict(item) for item in row]
-            if rqw[1]:  # obtaining maximum storage time from ethalon table
-                sql = "SELECT value FROM confmisc WHERE attribute = 'maxstoretime'"
-                row = session.execute(text(sql)).fetchall()
-                res = [dict(item) for item in row]
-                b = int(res[1][0]['value'])
+            row = session.execute(text(querysql)).fetchall()
+            result = [dict(item) for item in row]
+            if result[1]:  # obtaining maximum storage time from ethalon table
+                querysql = "SELECT value FROM confmisc WHERE attribute = 'maxstoretime'"
+                row = session.execute(text(querysql)).fetchall()
+                result = [dict(item) for item in row]
+                b = int(result[1][0]['value'])
                 maxstoretime = timedelta(days=b)
-            for dict in rqw[1]:
-                dict['duration'] = int(dict['duration'])
-                dict['end_date'] = (dict['start_date'] + timedelta(minutes=dict['duration'])) + maxstoretime
-                if (dict['end_date'] < stamptime):
-                    resconflist.append(dict)  # forming result list
+            for d in result[1]:
+                d['duration'] = int(d['duration'])
+                d['end_date'] = (d['start_date'] + timedelta(minutes=d['duration'])) + maxstoretime
+            if d['end_date'] < stamptime:
+                resconflist.append(d)  # forming result list
         elif table == 'type_persistent' or 'type_recurring':
-            sql = """SELECT a.rid, a.vcb_id, a.room_id, b.end_date
+            querysql = """SELECT a.rid, a.vcb_id, a.room_id, b.end_date
                      FROM conf_room AS a LEFT JOIN {} AS b ON b.rid = a.rid
                      WHERE a.type = '{}'""".format(table, _type)
-            row = session.execute(text(sql)).fetchall()
+            row = session.execute(text(querysql)).fetchall()
             rqw = [dict(item) for item in row]
-            if rqw[1]:  # obtining maximum storge time from ethalone table
-                sql = "SELECT value FROM confmisc WHERE attribute = 'maxstoretime'"
-                row = session.execute(text(sql)).fetchall()
-                res = [dict(item) for item in row]
-                b = int(res[1][0]['value'])
+            if rqw[1]:  # obtining maximum storage time from ethalone table
+                querysql = "SELECT value FROM confmisc WHERE attribute = 'maxstoretime'"
+                row = session.execute(text(querysql)).fetchall()
+                result = [dict(item) for item in row]
+                b = int(result[1][0]['value'])
                 maxstoretime = timedelta(days=b)
-            for dict in rqw[1]:  # add maximum storadge time
-                dict['end_date'] = (dict['end_date'] + maxstoretime)
-                if (dict['end_date'] < stamptime):  # Comparing with current timestamp
-                    resconflist.append(dict)  # forming result list
+            for d in rqw[1]:  # add maximum storage time
+                d['end_date'] = (d['end_date'] + maxstoretime)
+            if d['end_date'] < stamptime:  # Comparing with current timestamp
+                resconflist.append(d)  # forming result list
         else:
-            return {"result": False,
-                    "reason": "Couldn't obtain data for this conference type - '{}''".format(_type)}, 400
-            warnmess = "Couldn't obtain data for this conference type - '{}'".format(_type)
+            warnmess = "Couldn't obtain data for this conference type - '{}'".format(self._type)
             logging.warning(warnmess)
+            return {"result": False, "reason": "Couldn't obtain data for this conference type - '{}''".format(
+                self._type)}, 400
 
         # CLEANER part
         flist = []  # temporary lists

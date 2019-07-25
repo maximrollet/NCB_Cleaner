@@ -2,8 +2,10 @@
   <dictionary name="maxim">
     <words>
       <w>condb</w>
+      <w>confmisc</w>
       <w>envs</w>
       <w>ethalon</w>
+      <w>ethalone</w>
       <w>existance</w>
       <w>filelist</w>
       <w>flist</w>
@@ -18,6 +20,7 @@
       <w>pathlist</w>
       <w>ploadlist</w>
       <w>pymysql</w>
+      <w>querysql</w>
       <w>resconflist</w>
       <w>sessionmaker</w>
       <w>sqlalchemy</w>
