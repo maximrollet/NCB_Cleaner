@@ -1,16 +1,24 @@
 <component name="ProjectDictionaryState">
   <dictionary name="maxim">
     <words>
+      <w>asctime</w>
       <w>condb</w>
       <w>confmisc</w>
+      <w>confroomclean</w>
+      <w>datefmt</w>
       <w>envs</w>
+      <w>errormsg</w>
       <w>ethalon</w>
       <w>ethalone</w>
       <w>existance</w>
       <w>filelist</w>
       <w>flist</w>
+      <w>formatters</w>
       <w>fpath</w>
       <w>haproxy</w>
+      <w>infmsg</w>
+      <w>levelname</w>
+      <w>lineno</w>
       <w>listdict</w>
       <w>listdicttodict</w>
       <w>masklist</w>
@@ -26,6 +34,7 @@
       <w>sqlalchemy</w>
       <w>sqlquery</w>
       <w>stamptime</w>
+      <w>ttype</w>
       <w>warnmess</w>
     </words>
   </dictionary>

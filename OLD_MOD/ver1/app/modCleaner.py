@@ -4,12 +4,11 @@ CONF CLEANER MODULE
 @author: maximrollet
 """
 
-import os
 import glob
 from datetime import datetime, timedelta
 # from pytz import UTC  # timezone
 # import uuid
-from OLD_MOD.app.db import NCBdb
+from OLD_MOD.ver1.app.db import NCBdb
 import requests
 import json
 import logging

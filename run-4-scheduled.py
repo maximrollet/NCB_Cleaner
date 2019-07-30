@@ -1,10 +1,14 @@
+import os
+import sys
+
 activate_this = '/home/Envs/ncb_p3/bin/activate_this.py'
 exec(open("/home/Envs/ncb_p3/bin/activate_this.py").read(), {'__file__': "/home/Envs/ncb_p3/bin/activate_this.py"})
 
-# import sys
+basedir = os.path.abspath(os.path.dirname(__file__))
+sys.path.append('/var/www/NCB_Cleaner')
 
-# sys.path.append('/var/www/NCB_Cleaner')
+from ConRoomCleaner import *
 
-from ConfRoomCleaner import CRCleaner
+RunCleaner = CRCleaner("scheduled")
+RunCleaner.confroomclean()
 
-confroomcleaner('scheduled')
