@@ -28,19 +28,6 @@ class CRCleaner:
 
     def confroomclean(self):
         # CHECKER PART
-        """
-        logging.info("Cleaner started")
-        if _type == 'persistent':
-            table = 'type_persistent'  # type: str
-        elif _type == 'recurring':
-            table = 'type_recurring'
-        elif _type == 'scheduled':
-            table = 'type_scheduled'
-        else:
-            warnmess = "Wrong conference type '{}'".format(_type)
-            logging.warning(warnmess)
-            return {"result": False, "reason": "Wrong type of conference - '{}''".format(_type)}, 400
-        """
         ttype = [('persistent', 'type_persistent'), ('scheduled', 'type_scheduled'), ('recurring', 'type_recurring')]
         table_type = ''
         stamptime = datetime.now()  # stamp of time for comparing
@@ -54,48 +41,45 @@ class CRCleaner:
             errormsg = "Wrong type of conference  room '{}' was sent!".format(self._type)
             logging.error(errormsg)
 
-        logging.info("mysql queries")
-
         if table_type == 'type_scheduled':  # For scheduled type of conferences
             querysql = """SELECT a.rid, a.vcb_id, a.room_id, b.start_date, b.duration
-                          FROM conf_room AS a LEFT JOIN {} AS b ON b.rid = a.rid
-                          WHERE a.type = '{}'""".format(table_type, self._type)
+                                  FROM conf_room AS a LEFT JOIN {} AS b ON b.rid = a.rid
+                                  WHERE a.type = '{}'""".format(table_type, self._type)
             row = session.execute(text(querysql)).fetchall()
             result = [dict(item) for item in row]
             if result:  # obtaining maximum storage time from ethalon table
                 querysql = "SELECT value FROM confmisc WHERE attribute = 'maxstoretime'"
                 row = session.execute(text(querysql)).fetchall()
-                result = [dict(item) for item in row]
-                b = int(result[1][0]['value'])
+                res = [dict(item) for item in row]
+                b = int(res[0]['value'])
                 maxstoretime = timedelta(days=b)
-                for d in result[1]:
+                for d in result:
                     d['duration'] = int(d['duration'])
                     d['end_date'] = (d['start_date'] + timedelta(minutes=d['duration'])) + maxstoretime
                     if d['end_date'] < stamptime:
                         resconflist.append(d)  # forming result list
+
         elif table_type == 'type_persistent' or 'type_recurring':
             querysql = """SELECT a.rid, a.vcb_id, a.room_id, b.end_date
-                          FROM conf_room AS a LEFT JOIN {} AS b ON b.rid = a.rid
-                          WHERE a.type = '{}'""".format(table_type, self._type)
+                                  FROM conf_room AS a LEFT JOIN {} AS b ON b.rid = a.rid
+                                  WHERE a.type = '{}'""".format(table_type, self._type)
             row = session.execute(text(querysql)).fetchall()
             rqw = [dict(item) for item in row]
-            if rqw[1]:  # obtining maximum storage time from ethalone table
+            if rqw:  # obtining maximum storage time from ethalone table
                 querysql = "SELECT value FROM confmisc WHERE attribute = 'maxstoretime'"
                 row = session.execute(text(querysql)).fetchall()
                 result = [dict(item) for item in row]
-                b = int(result[1][0]['value'])
+                b = int(result[0]['value'])
                 maxstoretime = timedelta(days=b)
-                for d in rqw[1]:  # add maximum storage time
+                for d in rqw:  # add maximum storage time
                     d['end_date'] = (d['end_date'] + maxstoretime)
                     if d['end_date'] < stamptime:  # Comparing with current timestamp
                         resconflist.append(d)  # forming result list
         else:
             errmsg = "Couldn't obtain data for this conference type - '{}'".format(self._type)
             logging.error(errmsg)
-            # return {"result": False, "reason": "Couldn't obtain data for this conference type - '{}''".format(
-            #    self._type)}, 400
 
-        # CLEANER part
+            # CLEANER part
         flist = []  # temporary files lists
         masklist = []  # file mask list
         filelist = []  # file for deletion list
